@@ -7,30 +7,13 @@ import "C"
 
 import (
 	"database/sql"
-	"database/sql/driver"
 
 	sqlite "github.com/mattn/go-sqlite3"
 )
 
-// Conn is a connection to a spatialite database.
-type Conn struct {
-	*sqlite.SQLiteConn
-}
-
 // Driver is the spatialite driver.Driver implementation.
 type Driver struct {
 	*sqlite.SQLiteDriver
-}
-
-// Open opens a spatialite database.
-func (d *Driver) Open(name string) (driver.Conn, error) {
-	sqliteConn, err := d.SQLiteDriver.Open(name)
-	if err != nil {
-		return nil, err
-	}
-	return &Conn{
-		SQLiteConn: sqliteConn.(*sqlite.SQLiteConn),
-	}, nil
 }
 
 func init() {
