@@ -1,5 +1,6 @@
 package spatialite
 
+// #define SQLITE_ENABLE_RTREE 1
 // #include <sqlite3.h>
 // #include <spatialite.h>
 import "C"
@@ -11,14 +12,17 @@ import (
 	sqlite "github.com/mattn/go-sqlite3"
 )
 
+// Conn is a connection to a spatialite database.
 type Conn struct {
 	*sqlite.SQLiteConn
 }
 
+// Driver is the spatialite driver.Driver implementation.
 type Driver struct {
 	*sqlite.SQLiteDriver
 }
 
+// Open opens a spatialite database.
 func (d *Driver) Open(name string) (driver.Conn, error) {
 	sqliteConn, err := d.SQLiteDriver.Open(name)
 	if err != nil {
@@ -33,7 +37,7 @@ func init() {
 	sql.Register("spatialite", &Driver{
 		SQLiteDriver: &sqlite.SQLiteDriver{
 			Extensions: []string{
-				"libspatialite",
+				"mod_spatialite", // https://groups.google.com/forum/#!topic/golang-nuts/Kj0WKQaLBqY
 			},
 		},
 	})
