@@ -1,3 +1,5 @@
+// Package spatialite is a thin wrapper around https://github.com/mattn/go-sqlite3
+// that automatically loads the mod_spatialite extension.
 package spatialite
 
 // #define SQLITE_ENABLE_RTREE 1
