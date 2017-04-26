@@ -36,7 +36,7 @@ func (d *Driver) Open(name string) (driver.Conn, error) {
 		return nil, err
 	}
 	// https://www.gaia-gis.it/gaia-sins/spatialite-cookbook/html/metadata.html
-	stmt, err := slconn.Prepare(`SELECT InitSpatialMetaData(1)`)
+	stmt, err := conn.Prepare(`SELECT InitSpatialMetaData(1)`)
 	if err != nil {
 		return nil, err
 	}
