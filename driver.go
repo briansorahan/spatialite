@@ -10,9 +10,14 @@ import "C"
 import (
 	"database/sql"
 	"database/sql/driver"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	sqlite "github.com/mattn/go-sqlite3"
 )
+
+const home = "/go/src/github.com/briansorahan/spatialite"
 
 // Conn is a spatialite database connection.
 type Conn struct {
@@ -26,7 +31,7 @@ type Driver struct {
 
 // Open opens a new database connection.
 func (d *Driver) Open(name string) (driver.Conn, error) {
-	slconn, err := d.SQLiteDriver.Open(name)
+	conn, err := d.SQLiteDriver.Open(name)
 	if err != nil {
 		return nil, err
 	}
@@ -48,9 +53,33 @@ func (d *Driver) Open(name string) (driver.Conn, error) {
 			return nil, err
 		}
 	}
+	if err := loadEpsgTable(conn); err != nil {
+		return nil, err
+	}
 	return &Conn{
-		SQLiteConn: slconn.(*sqlite.SQLiteConn),
+		SQLiteConn: conn.(*sqlite.SQLiteConn),
 	}, nil
+}
+
+func loadEpsgTable(conn driver.Conn) error {
+	f, err := os.Open(filepath.Join(home, "epsg-sqlite.sql"))
+	if err != nil {
+		return err
+	}
+	epsgSQL, err := ioutil.ReadAll(f)
+	if err != nil {
+		return err
+	}
+	epsgStmt, err := conn.Prepare(string(epsgSQL))
+	if err != nil {
+		return err
+	}
+	defer func() { _ = epsgStmt.Close() }()
+
+	if _, err := epsgStmt.Exec(nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func init() {
