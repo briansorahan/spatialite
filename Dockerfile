@@ -1,5 +1,5 @@
 FROM	golang:1.8.1-alpine
-RUN	apk add --update --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ wget geos-dev sqlite-dev gdal-dev proj4-dev git gcc g++ coreutils make zlib-dev expat-dev libxml2-dev
+RUN	apk add --update --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ wget geos-dev sqlite-dev gdal-dev proj4-dev git gcc g++ coreutils make zlib-dev expat-dev libxml2-dev readline-dev
 RUN	wget http://www.gaia-gis.it/gaia-sins/freexl-1.0.2.tar.gz && \
 	tar xzf freexl-1.0.2.tar.gz && rm freexl-1.0.2.tar.gz && cd freexl-1.0.2 && ./configure && make && make install && rm -rf /go/freexl-1.0.2
 RUN	wget http://www.gaia-gis.it/gaia-sins/readosm-1.0.0e.tar.gz && tar xzf readosm-1.0.0e.tar.gz && \

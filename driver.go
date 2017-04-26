@@ -30,19 +30,23 @@ func (d *Driver) Open(name string) (driver.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	stmt, err := slconn.Prepare(`SELECT InitSpatialMetaData(?)`)
+	// https://www.gaia-gis.it/gaia-sins/spatialite-cookbook/html/metadata.html
+	stmt, err := slconn.Prepare(`SELECT InitSpatialMetaData(1)`)
 	if err != nil {
 		return nil, err
 	}
 	defer func() { _ = stmt.Close() }()
 
-	rows, err := stmt.Query([]driver.Value{1})
-	if err != nil {
+	rows, err := stmt.Query(nil)
+	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
-	// We don't need the rows.
-	if err := rows.Close(); err != nil {
-		return nil, err
+	defer func() { _ = rows.Close() }()
+
+	if err != sql.ErrNoRows {
+		if err := rows.Next(nil); err != nil {
+			return nil, err
+		}
 	}
 	return &Conn{
 		SQLiteConn: slconn.(*sqlite.SQLiteConn),
