@@ -10,9 +10,6 @@ import "C"
 import (
 	"database/sql"
 	"database/sql/driver"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 
 	sqlite "github.com/mattn/go-sqlite3"
 )
@@ -53,33 +50,9 @@ func (d *Driver) Open(name string) (driver.Conn, error) {
 			return nil, err
 		}
 	}
-	if err := loadEpsgTable(conn); err != nil {
-		return nil, err
-	}
 	return &Conn{
 		SQLiteConn: conn.(*sqlite.SQLiteConn),
 	}, nil
-}
-
-func loadEpsgTable(conn driver.Conn) error {
-	f, err := os.Open(filepath.Join(home, "epsg-sqlite.sql"))
-	if err != nil {
-		return err
-	}
-	epsgSQL, err := ioutil.ReadAll(f)
-	if err != nil {
-		return err
-	}
-	epsgStmt, err := conn.Prepare(string(epsgSQL))
-	if err != nil {
-		return err
-	}
-	defer func() { _ = epsgStmt.Close() }()
-
-	if _, err := epsgStmt.Exec(nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func init() {

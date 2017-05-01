@@ -45,7 +45,7 @@ func TestBufferGeoJSON(t *testing.T) {
 
 func TestTransform(t *testing.T) {
 	const (
-		query = `SELECT AsGeoJSON(ST_Transform(GeomFromGeoJSON('{"type":"Point","coordinates":[2,2]}'), 4236))`
+		query = `SELECT AsGeoJSON(ST_Transform(SetSrid(GeomFromGeoJSON('{"type":"Point","coordinates":[-75.94499,45.26621]}'), 4326), 32618))`
 	)
 	var (
 		db = testDB(":memory:", t)
