@@ -14,8 +14,6 @@ import (
 	sqlite "github.com/mattn/go-sqlite3"
 )
 
-const home = "/go/src/github.com/briansorahan/spatialite"
-
 // Conn is a spatialite database connection.
 type Conn struct {
 	*sqlite.SQLiteConn
