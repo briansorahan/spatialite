@@ -1,15 +1,19 @@
-GO_SRC			= $(wildcard *.go)
+GO_SRC = $(wildcard *.go)
+IMG    = bsorahan/spatialite
 
 image: .image
 
 .image: Dockerfile $(GO_SRC)
-	@docker build -t bsorahan/spatialite .
+	@docker build -t $(IMG) .
 	@touch $@
 
+push: image
+	@docker push $(IMG)
+
 test: .image
-	@docker run -w /go/src/github.com/briansorahan/spatialite bsorahan/spatialite go test -v
+	@docker run -w /root $(IMG) go test -v
 
 clean:
 	@rm -rf .image
 
-.PHONY: clean image test
+.PHONY: clean image push test
