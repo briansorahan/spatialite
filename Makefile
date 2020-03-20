@@ -11,7 +11,7 @@ push: image
 	@docker push $(IMG)
 
 test: .image
-	@docker run -w /root $(IMG) go test -v
+	@docker run -v $(shell pwd):/root -w /root $(IMG) go test -v
 
 clean:
 	@rm -rf .image
